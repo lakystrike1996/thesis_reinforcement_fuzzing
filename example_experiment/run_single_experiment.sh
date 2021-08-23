@@ -21,17 +21,14 @@ rm -rf !("run_single_experiment.sh")
 
 #clone rainfuzz files
 echo "copyng rainfuzz files ..."
-mkdir rainfuzz
 cp -r $rainfuzz_repo ./
 
 #clone scripts files
 echo "copying scripts files ..."
-mkdir scripts
 cp -r $scripts_repo ./
 
 #copyng python mutator's files
 echo "copying python mutator's files ..."
-mkdir py_mutator
 cp -r $python_mutator_repo ./
 sudo ./rainfuzz/afl-system-config
 
@@ -71,12 +68,12 @@ cp ../$binary_name ./
 #start python mutator server in background
 echo "starting python mutator server in background ..."
 echo "python ../py_mutator/mutator.py ./logs $max_seed $rand_percentage $learning_rate $clip_param $temperature $buffer_length $activation_function $intermediate_layer_size $num_layers"
-python ../py_mutator/mutator.py ./logs $max_seed $rand_percentage $learning_rate $clip_param $temperature $buffer_length $activation_function $intermediate_layer_size $num_layers > mutator_out.txt 2>&1 &
+python ./py_mutator/mutator.py ./logs $max_seed $rand_percentage $learning_rate $clip_param $temperature $buffer_length $activation_function $intermediate_layer_size $num_layers > mutator_out.txt 2>&1 &
 
 sleep 15
 
 echo "running rainfuzz for $max_time seconds ..."
-../rainfuzz/afl-fuzz -d -i ./in -o ./out -m none -- ./$binary_name &
+./rainfuzz/afl-fuzz -d -i ./in -o ./out -m none -- ./$binary_name &
 fuzzer_pid=$!
 
 sleep $max_time
