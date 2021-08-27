@@ -77,7 +77,7 @@ def get_heatmap(input, n_actions):
     probs = np.squeeze(np.exp(pg_model(np.atleast_2d(x))))
     final_probs = probs[:n_actions]
     sum = np.sum(final_probs)
-    return final_probs / sum
+    return final_probs / sum if sum != 0 else np.asarray([1]*n_actions) / n_actions
 
 
 def pick_action(input, n_actions):
