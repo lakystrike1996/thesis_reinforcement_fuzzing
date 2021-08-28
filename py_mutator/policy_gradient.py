@@ -75,15 +75,15 @@ class PolicyGradientModel(tf.keras.Model):
 def get_heatmap(input, n_actions):
     x = np.frombuffer(input.ljust(max_input_size, b'\x00'), dtype=np.uint8)
     probs = np.squeeze(np.exp(pg_model(np.atleast_2d(x))))
+    entropy = -np.dot(probs, [(np.log(p) if p > 0 else 0) for p in probs])
     final_probs = probs[:n_actions]
     sum = np.sum(final_probs)
-    return final_probs / sum if sum != 0 else np.asarray([1]*n_actions) / n_actions
+    return final_probs / sum if sum != 0 else np.asarray([1]*n_actions) / n_actions, entropy
 
 
 def pick_action(input, n_actions):
-    probs = get_heatmap(input, n_actions)    
+    probs, entropy = get_heatmap(input, n_actions)    
     action = np.random.choice(n_actions, p=probs)
-    entropy = -np.dot(probs, [(np.log(p) if p > 0 else 0) for p in probs]) * (max_input_size / n_actions)
     return action, probs[action], entropy
 
 def get_loss():
@@ -97,8 +97,8 @@ def get_loss():
     for i in range(0, memory.count):
         out = pg_model(tf.convert_to_tensor(np.atleast_2d(np.frombuffer(memory.states[i].ljust(max_input_size, b'\x00'), dtype=np.uint8))))
         log_prob = out[0][memory.actions[i]]
-        log_policy = out[0][:len(memory.states[i])]
-        entropy = -tf.reduce_sum(log_policy*tf.exp(log_policy), axis=-1)*(max_input_size/len(memory.states[i]))
+        log_policy = out[0]
+        entropy = -tf.reduce_sum(log_policy*tf.exp(log_policy), axis=-1)
         advantage = memory.rewards[i]
         old_prob = memory.probabilities[i]
         log_probs.append(log_prob)
