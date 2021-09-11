@@ -1,5 +1,11 @@
 from matplotlib import pyplot as plt
 import sys
+import numpy as np
+
+def smooth(y, box_pts):
+    box = np.ones(box_pts)/box_pts
+    y_smooth = np.convolve(y, box, mode='same')
+    return y_smooth
 
 file_path = sys.argv[1]
 file_path_rand = sys.argv[2]
@@ -23,7 +29,7 @@ for line in file_rand.readlines():
     rewards_rand_ma.append((int(s[1]) + rewards_rand_ma[c-1]*(c-1))/c)
     c+=1
 
-plt.plot(x, rewards_ma, label="rain")
-plt.plot(x_rand, rewards_rand_ma, label="rand")
+plt.plot(x, smooth(rewards_ma, 20), label="rain")
+plt.plot(x_rand, smooth(rewards_rand_ma, 20), label="rand")
 plt.legend()
 plt.savefig("./avg_rewards")
