@@ -46,4 +46,4 @@ for line in file_rand.readlines():
 plt.plot(x, rewards_ma, label="rain")
 plt.plot(x_rand, rewards_rand_ma, label="rand")
 plt.legend()
-plt.savefig("./avg_rewards")
+plt.savefig("./navg_rewards")

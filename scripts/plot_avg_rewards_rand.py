@@ -29,7 +29,8 @@ for line in file_rand.readlines():
     rewards_rand_ma.append((int(s[1]) + rewards_rand_ma[c-1]*(c-1))/c)
     c+=1
 
-plt.plot(x, smooth(rewards_ma, 20), label="rain")
-plt.plot(x_rand, smooth(rewards_rand_ma, 20), label="rand")
+plt.plot(x[5000:], rewards_ma[5000:], label="rain")
+plt.plot(x_rand[5000:], rewards_rand_ma[5000:], label="rand")
 plt.legend()
 plt.savefig("./avg_rewards")
+print(rewards_ma[-1], rewards_rand_ma[-1], rewards_ma[-1]/rewards_rand_ma[-1])

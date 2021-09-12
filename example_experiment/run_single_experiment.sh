@@ -80,7 +80,8 @@ sleep $max_time
 kill -SIGINT $fuzzer_pid || echo "somethingwrong"
 
 cd graphs
-python3 ../../scripts/plot_avg_rewards_rand.py ../logs/rewards.log ../logs/rand_rewards.log
+python3 ../../scripts/plot_avg_rewards_rand.py ../logs/rewards.log ../logs/rand_rewards.log > res.txt
+python3 ../../scripts/plot_navg_rewards_rand.py 10000 ../logs/rewards.log ../logs/rand_rewards.log
 python3 ../../scripts/plot_rewards_rand.py ../logs/rewards.log ../logs/rand_rewards.log
 python3 ../../scripts/plot_rewards.py ../logs/rewards.log
 python3 ../../scripts/plot_entropy.py ../logs/entropies.log
