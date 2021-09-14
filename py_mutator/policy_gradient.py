@@ -64,7 +64,7 @@ class PolicyGradientModel(tf.keras.Model):
         layers = [tf.keras.layers.Input(shape=(num_inputs,))]
         for _ in range(num_layers):
             layers += [tf.keras.layers.Dense(intermediate_layers_size, activation=activation_function, kernel_initializer=tf.keras.initializers.Constant(value=0.5))]
-        layers += [tf.keras.layers.Dense(num_outputs, activation=tf.nn.softmax, kernel_initializer=tf.keras.initializers.Constant(value=0.5))]
+        layers += [tf.keras.layers.Dense(num_outputs, activation=tf.nn.log_softmax, kernel_initializer=tf.keras.initializers.Constant(value=0.5))]
 
         self.NN = tf.keras.models.Sequential(layers)
     
@@ -74,7 +74,7 @@ class PolicyGradientModel(tf.keras.Model):
 
 def get_heatmap(input, n_actions):
     x = np.frombuffer(input.ljust(max_input_size, b'\x00'), dtype=np.uint8)
-    probs = np.squeeze(pg_model(np.atleast_2d(x)))
+    probs = np.squeeze(np.exp(pg_model(np.atleast_2d(x))))
     entropy = -np.dot(probs, [(np.log(p) if p > 0 else 0) for p in probs])
     final_probs = probs[:n_actions]
     sum = np.sum(final_probs)
@@ -86,35 +86,6 @@ def pick_action(input, n_actions):
     action = np.random.choice(n_actions, p=probs)
     return action, probs[action], entropy
 
-def get_loss():
-    probs = []
-    old_probs = []
-    advantages = []
-    sur1 = []
-    sur2 = []
-    entropies = []
-    
-    for i in range(0, memory.count):
-        out = pg_model(tf.convert_to_tensor(np.atleast_2d(np.frombuffer(memory.states[i].ljust(max_input_size, b'\x00'), dtype=np.uint8))))
-        prob = out[0][memory.actions[i]] / np.sum(out[0][:len(memory.states[i])])
-        log_policy = out[0]
-        entropy = -tf.reduce_sum(log_policy*tf.exp(log_policy), axis=-1)
-        advantage = memory.rewards[i]
-        old_prob = memory.probabilities[i]
-        probs.append(prob)
-        old_probs.append(old_prob)
-        advantages.append(advantage)
-        entropies.append(entropy)
-
-    # r = pnew / pold
-    r = tf.stack(probs) / old_probs
-    surr1 = r*advantages
-    surr2 = tf.clip_by_value(r, 1.0 - clip_param, 1.0 + clip_param) * advantages
-    pol_surr = -tf.reduce_mean(tf.minimum(surr1, surr2))
-
-    loss = pol_surr - temperature * tf.reduce_mean(entropies)
-    return loss
-'''
 def get_loss():
     log_probs = []
     old_probs = []
@@ -143,7 +114,6 @@ def get_loss():
 
     loss = pol_surr - temperature * tf.reduce_mean(entropies)
     return loss
-'''
 
 # provare con minimize https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/Optimizer
 def train_one_batch():
