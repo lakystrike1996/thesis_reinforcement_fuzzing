@@ -16,7 +16,7 @@ MSG_CODE_DEINIT = 4
 if(len(sys.argv) != 11):
     sys.exit("usage: python mutator.py {logs_directory} {max_seed_size} {rand_percentage} {learning rate} {clip_param} {temperature} {buffer_length} {activation_function} {intermediate_layer_size} {num_layers}")
 
-logging.basicConfig(filename=sys.argv[1]+'/py_mutator.log', level=logging.INFO)
+logging.basicConfig(filename=sys.argv[1]+'/py_mutator.log', level=logging.ERROR)
 rewards_file = open(sys.argv[1]+'/rewards.log', 'w')
 probabilities_file = open(sys.argv[1]+'/probabilities.log', 'w')
 entropies_file = open(sys.argv[1]+'/entropies.log', 'w')

@@ -85,7 +85,6 @@ def get_heatmap(input, n_actions):
 
 def pick_action(input, n_actions):
     probs, entropy = get_heatmap(input, n_actions)    
-    print("probs2: ", probs)
     action = np.random.choice(n_actions, p=probs)
     return action, probs[action], entropy
 
@@ -101,7 +100,6 @@ def get_loss():
         x = np.frombuffer(memory.states[i].ljust(max_input_size, b'\x00'), dtype=np.uint8)
         y = pg_model(np.atleast_2d(x))[0]
         tot = np.sum(y)
-        print("y: ", y)
         probs1 = y / tot
         prob = probs1[memory.actions[i]]
         log_policy = np.log(probs1)
@@ -114,12 +112,7 @@ def get_loss():
         entropies.append(entropy)
 
     # r = pnew / pold
-    print(type(probs))
-    print(type(probs[0]))
-    print("probs: ", probs)
     r = tf.math.divide(probs, old_probs)
-    print(type(r))
-    print("r: ", r)
     surr1 = r*advantages
     surr2 = tf.clip_by_value(r, 1.0 - clip_param, 1.0 + clip_param) * advantages
     pol_surr = -tf.reduce_mean(tf.minimum(surr1, surr2))
