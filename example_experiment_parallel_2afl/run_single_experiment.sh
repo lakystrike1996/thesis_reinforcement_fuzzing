@@ -58,7 +58,7 @@ echo "running rainfuzz for $max_time seconds ..."
 fuzzer_pid=$!
 
 echo "running AFLplusplus_nomf for $max_time seconds ..."
-./AFLplusplus_nomf/afl-fuzz -d -i ./in -o ./out -S AFLpp -m none -- ./$binary_name &
+./AFLplusplus/afl-fuzz -d -i ./in -o ./out -S AFLpp -m none -- ./$binary_name &
 fuzzer_pid1=$!
 
 sleep $max_time
