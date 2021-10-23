@@ -4,7 +4,7 @@ binary_name="libjpegturbo"
 binary_path="../libjpegturbo"
 corpus_path="../libjpegturbo_corpus/"
 rainfuzz_repo="../rainfuzz"
-AFLplusplus_nomf_repo="../AFLplusplus_nomf"
+AFLplusplus_nomf_repo="../AFLplusplus"
 python_mutator_repo="../py_mutator"
 scripts_repo="../scripts"
 
