@@ -28,9 +28,7 @@ cp -r $scripts_repo ./
 
 sudo ./rainfuzz/afl-system-config
 
-# read all the parameters
-max_seed=$1
-max_time=$2
+max_time=$1
 
 
 echo "building AFLplusplus_nomf with the specified parameters ..."
