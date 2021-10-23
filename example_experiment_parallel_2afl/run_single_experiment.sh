@@ -33,7 +33,7 @@ max_time=$1
 
 echo "building AFLplusplus_nomf with the specified parameters ..."
 
-cd ./AFLplusplus_nomf && \
+cd ./AFLplusplus && \
     export AFL_NO_X86=1 && \
     PYTHON_INCLUDE=/ make clean > /dev/null && make > /dev/null
 cd ..
