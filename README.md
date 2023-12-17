@@ -1,4 +1,4 @@
-# Thesis Reinforcement Fuzzing
+# Rainfuzz : reinforcement-learning driven heat-maps for boosting coverage-guided fuzzing
 
 This repository contains all the artifacts produced for my master thesis: 
 
